@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/cardCategory"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:background="@drawable/c_common_shape"
+    android:layout_margin="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/ivPhoto"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:elevation="3dp"
+        android:padding="13dp"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_device_bluetooth"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/tvLastMsg"
+        android:text="File name.pdf"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:textStyle="italic"
+        android:textSize="16sp"
+        android:elevation="5dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginStart="5dp"
+        app:layout_constraintStart_toEndOf="@id/ivPhoto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lay"
+        />
+
+    <LinearLayout
+        android:id="@+id/lay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:elevation="5dp"
+        android:padding="5dp"
+        app:layout_constraintStart_toEndOf="@id/ivPhoto"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvAddress"
+            android:text="23 jun 2023"
+            android:gravity="top"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:visibility="visible"
+            android:elevation="5dp"
+            android:layout_marginStart="5dp"
+
+            />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvLastSeen"
+            android:text="16:10:20"
+            android:textColor="@color/green"
+            android:gravity="top|center"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:visibility="visible"
+            android:elevation="5dp"
+            android:layout_marginStart="10dp"
+
+            />
+
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

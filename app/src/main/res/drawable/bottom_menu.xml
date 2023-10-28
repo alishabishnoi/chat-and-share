@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Rate Us"
+        android:id="@+id/nav_rate_us"
+        android:icon="@drawable/ic_rate">
+
+    </item>
+
+    <item android:title="Share App"
+        android:id="@+id/nav_share"
+        android:icon="@drawable/icon_share">
+
+    </item>
+
+    <item android:title="Policy"
+        android:id="@+id/nav_policy"
+        android:icon="@drawable/ic_info">
+
+    </item>
+
+    <item android:title="Feed Back"
+        android:id="@+id/nav_feed_back"
+        android:icon="@drawable/ic_feedback">
+
+    </item>
+
+    <!--<item android:title="Credits"
+        android:id="@+id/nav_credits"
+        android:icon="@drawable/icon_policy">
+
+    </item>-->
+
+</menu>

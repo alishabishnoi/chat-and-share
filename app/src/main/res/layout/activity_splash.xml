@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.Splash">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        android:layout_margin="15dp"
+        android:padding="5dp"
+        app:cardBackgroundColor="#EBEAEA"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            >
+
+            <ImageView
+                android:id="@+id/ivPhoto"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:elevation="3dp"
+                android:padding="13dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_device_bluetooth"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvLastMsg"
+                android:text="Bluetooth Chat"
+                android:singleLine="true"
+                android:gravity="center_vertical"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:elevation="5dp"
+                android:textColor="@color/colorAccent"
+                android:layout_marginTop="6dp"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvAddress"
+                android:text="Chat with friends for free \n near to you"
+                android:gravity="center_vertical"
+                android:textStyle="italic"
+                android:textSize="14sp"
+                android:elevation="5dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto"
+                app:layout_constraintTop_toBottomOf="@id/tvLastMsg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        android:layout_margin="15dp"
+        android:padding="5dp"
+        app:cardBackgroundColor="#EBEAEA"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            >
+
+            <ImageView
+                android:id="@+id/ivPhoto2"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:elevation="3dp"
+                android:padding="13dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_wifi"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:tint="@color/grey" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvDeviceName2"
+                android:text="Wifi Chat"
+                android:singleLine="true"
+                android:gravity="center_vertical"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:elevation="5dp"
+                android:textColor="@color/colorAccent"
+                android:layout_marginTop="6dp"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvAddress2"
+                android:text="Chat and Share files \n seamlessly"
+                android:gravity="center_vertical"
+                android:textStyle="italic"
+                android:textSize="14sp"
+                android:elevation="5dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto2"
+                app:layout_constraintTop_toBottomOf="@id/tvDeviceName2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/btn_walkie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        android:layout_margin="15dp"
+        android:padding="5dp"
+        app:cardBackgroundColor="#EBEAEA"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            >
+
+            <ImageView
+                android:id="@+id/ivPhoto3"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:elevation="3dp"
+                android:padding="13dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_motorolla"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvDeviceName3"
+                android:text="Walkie Talkie"
+                android:singleLine="true"
+                android:gravity="center_vertical"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:elevation="5dp"
+                android:textColor="@color/colorAccent"
+                android:layout_marginTop="6dp"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvAddress3"
+                android:text="Free voice streaming \n within 100 mtr"
+                android:gravity="center_vertical"
+                android:textStyle="italic"
+                android:textSize="14sp"
+                android:elevation="5dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto3"
+                app:layout_constraintTop_toBottomOf="@id/tvDeviceName3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/btn_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        android:layout_margin="15dp"
+        android:padding="5dp"
+        app:cardBackgroundColor="#EBEAEA"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            >
+
+            <ImageView
+                android:id="@+id/ivPhoto4"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:elevation="3dp"
+                android:padding="13dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_fileshare"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvDeviceName4"
+                android:text="File Share"
+                android:singleLine="true"
+                android:gravity="center_vertical"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:elevation="5dp"
+                android:textColor="@color/colorAccent"
+                android:layout_marginTop="6dp"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvAddress4"
+                android:text="Fast and Easy file sharing \n nearby devices"
+                android:gravity="center_vertical"
+                android:textStyle="italic"
+                android:textSize="14sp"
+                android:elevation="5dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto4"
+                app:layout_constraintTop_toBottomOf="@id/tvDeviceName4"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

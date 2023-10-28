@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="25dp"
+    android:background="@drawable/c_common_shape"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="Rate us "
+        android:textColor="@color/colorAccent"
+        android:background="@drawable/c_shape_oposite"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+    <RatingBar
+        android:layout_margin="5dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rating_bar"
+        android:saveEnabled="true"
+        android:numStars="5"
+        android:stepSize="1"
+        android:rating="2"
+        />
+
+    <TextView
+        android:id="@+id/showRatingMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:text="Good"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/submitRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:background="@drawable/c_common_shape"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:text="Submit"
+        android:textSize="25sp" />
+
+</LinearLayout>

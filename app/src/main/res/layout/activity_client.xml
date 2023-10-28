@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#333333"
+    android:layout_gravity="center"
+    android:gravity="center"
+    >
+
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:text="CLIENT"
+        />
+
+    <EditText
+        android:id="@+id/etIP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="ip"
+        android:textColorHint="@color/white"
+        android:inputType="textPersonName"
+        android:textColor="#fff"
+         />
+
+    <Button
+        android:id="@+id/btnConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape"
+        android:padding="8dp"
+        android:text="Connect To Server"
+        />
+
+
+    <Button
+        android:id="@+id/btnSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:background="@drawable/shape"
+        android:text="SEND"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button11"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName4" />
+
+    <TextView
+        android:id="@+id/tvMessages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="NOT CONNECTED"
+        android:textColor="#FFFFFF"
+         />
+
+    <Button
+
+        android:id="@+id/FILES"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="FILES"
+         />
+
+
+    <Button
+        android:id="@+id/showFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Show Files"
+        />
+
+
+
+
+
+
+</LinearLayout>

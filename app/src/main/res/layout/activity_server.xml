@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="#333333"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SERVER"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp" />
+
+
+
+    <TextView
+        android:id="@+id/tvmessages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="NOT CONNECTED"
+        android:textColor="#FFFFFF" />
+
+
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Send" />
+
+    <Button
+        android:id="@+id/FILES"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="FILES" />
+
+
+    <Button
+        android:id="@+id/showFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="SHOW Files"
+        />
+</LinearLayout>

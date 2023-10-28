@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission
+        android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Google Play filtering -->
+    <!--<uses-feature
+        android:name="android.hardware.wifi.direct"
+        android:required="true" />-->
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/Base.Theme.ChatApp"
+        tools:targetApi="31">
+        <activity
+            android:name=".activity.FirstSpalsh"
+            android:exported="true"
+            android:theme="@style/Base.Theme.ChatAppNoAction">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.FileListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".utils.Notification"
+            android:exported="true" />
+
+        <service
+            android:name=".wifichat.ReadingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SmsReceiver" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".DirectReplyReceiver" />
+
+        <activity
+            android:name=".fileshare.WifiScanner"
+            android:exported="false" />
+        <activity
+            android:name=".fileshare.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".fileshare.Server"
+            android:exported="false" />
+        <activity
+            android:name=".fileshare.Client"
+            android:exported="false" />
+
+        <activity
+            android:name=".walkie.ChatWindow"
+            android:exported="false" />
+        <activity
+            android:name=".wifichat.WifiChatActivity"
+            android:exported="false" />
+
+        <service
+            android:name=".walkie.AudioStreamingService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".walkie.WalkieMain"
+            android:exported="true" />
+        <activity
+            android:name=".activity.Splash"
+            android:exported="true">
+
+        </activity>
+        <activity
+            android:name=".bluetooth.BluetoothUsersActivity"
+            android:exported="true" />
+        <activity
+            android:name=".bluetooth.DeviceListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".bluetooth.ChatActivity"
+            android:exported="true" /> <!-- custom activity to for qr -->
+        <activity
+            android:name=".activity.QRCaptureClass"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.chatapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider" />
+        </provider>
+    </application>
+
+</manifest>
