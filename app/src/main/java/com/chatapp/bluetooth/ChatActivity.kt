@@ -28,10 +28,10 @@ import com.chatapp.db.OfflineDatabase
 import com.chatapp.models.Users
 import com.chatapp.models.chat
 import com.chatapp.utils.PermissionManager
+import com.chatapp.wifichat.HandleSocket
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -153,6 +153,7 @@ class ChatActivity : AppCompatActivity() {
         chatList.add(chatModel)
         chatAdapter.notifyItemInserted(chatList.size - 1)
         binding.chatRecyclerView.scrollToPosition(chatList.size - 1)
+        insertBlueChat(device!!.name, receiver, msg, time)
     }
 
     private fun getDate(milliSeconds: Long, dateFormat: String?): String? {
@@ -236,16 +237,20 @@ class ChatActivity : AppCompatActivity() {
     public override fun onPause() {
         super.onPause()
         if (D) Log.e(TAG, "- ON PAUSE -")
+        HandleSocket.activityBlueStatus = "pause"
     }
 
     public override fun onStop() {
         super.onStop()
         if (D) Log.e(TAG, "-- ON STOP --")
+        HandleSocket.activityBlueStatus = "stop"
     }
 
     public override fun onDestroy() {
         super.onDestroy()
         // Stop the Bluetooth chat services
+        HandleSocket.activityBlueStatus = "destroy"
+
         if (mChatService.equals(null)) mChatService.stop()
         isConnected = false
         if (D) Log.e(TAG, "--- ON DESTROY ---")
@@ -655,9 +660,9 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    fun insertBlueChat(sender: String, receiver: String, msg: String, time: String) {
+    private fun insertBlueChat(sender: String, receiver: String, msg: String, time: String) {
         val oirModel = chat(
-            0, "", sender, receiver, R.drawable.happyicon, msg, time, "", true
+            0, "bluetooth", sender, receiver, R.drawable.happyicon, msg, time, "", true
         )
 
         CoroutineScope(Dispatchers.IO).launch {

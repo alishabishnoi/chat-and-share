@@ -1,16 +1,28 @@
 package com.chatapp.bluetooth
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.text.format.Formatter
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.Person
+import androidx.core.app.RemoteInput
 import com.chatapp.Constants
+import com.chatapp.DirectReplyReceiver
+import com.chatapp.R
+import com.chatapp.wifichat.HandleSocket
 import com.chatapp.wifichat.WifiChatActivity
 import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
@@ -697,13 +709,74 @@ class ChatService(val context: Context?, private val mHandler: Handler) {
             } else {
                 Log.d("** reading file", "it was a message")
                 // Send the obtained bytes to the UI Activity
-                mHandler.obtainMessage(
-                    Constants.MESSAGE_READ, totalFileNameSizeInBytes, -1, fileName.toByteArray()
-                ).sendToTarget()
+                if (HandleSocket.activityBlueStatus == "pause" || HandleSocket.activityBlueStatus == "stop") {
+                    sendChannel1Notification(context, prefix[1])
+                } else {
+                    mHandler.obtainMessage(
+                        Constants.MESSAGE_READ, totalFileNameSizeInBytes, -1, fileName.toByteArray()
+                    ).sendToTarget()
+                }
+
             }
 
 
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun sendChannel1Notification(context: Context?, message: String) {
+        val activityIntent = Intent(context, WifiChatActivity::class.java)
+        val contentIntent = PendingIntent.getActivity(
+            context, 0, activityIntent, PendingIntent.FLAG_MUTABLE
+        )
+        val remoteInput = RemoteInput.Builder("key_text_reply")
+            .setLabel("Your answer...")
+            .build()
+        val replyPendingIntent: PendingIntent?
+        val replyIntent = Intent(context, DirectReplyReceiver::class.java)
+        replyIntent.putExtra("reply", message)
+        replyPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0, replyIntent, PendingIntent.FLAG_MUTABLE
+        )
+        val replyAction: NotificationCompat.Action = NotificationCompat.Action.Builder(
+            R.drawable.ic_send,
+            "Reply",
+            replyPendingIntent
+        ).addRemoteInput(remoteInput).build()
+
+        /*val messagingStyle = NotificationCompat.MessagingStyle("Me")
+        messagingStyle.conversationTitle = "Group Chat"
+
+        for (chatMessage in MESSAGES) {
+            val notificationMessage = NotificationCompat.MessagingStyle.Message(
+                chatMessage.text,
+                chatMessage.timestamp,
+                chatMessage.sender
+            )
+            messagingStyle.addMessage(notificationMessage)
+        }*/
+
+        val person = Person.Builder().setName("sender").build()
+        val notificationStyle = NotificationCompat.MessagingStyle(person)
+            .addMessage(message, System.currentTimeMillis(), person)
+
+        val notification: Notification = NotificationCompat.Builder(context!!, "channel1")
+            .setSmallIcon(R.drawable.app_icon)
+            .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_bluetooth))
+            //.setStyle(messagingStyle)
+            .setStyle(notificationStyle)
+            .addAction(replyAction)
+            .setColor(Color.BLUE)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setContentIntent(contentIntent)
+            .setAutoCancel(true)
+            .setOnlyAlertOnce(true)
+            .build()
+        val notificationManager = NotificationManagerCompat.from(context)
+        //we need to change this id for different notification
+        notificationManager.notify(2, notification)
     }
 
 

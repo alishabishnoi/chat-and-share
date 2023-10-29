@@ -11,13 +11,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.chatapp.wifichat.HandleSocket
 import com.chatapp.wifichat.ReadingService
 import com.chatapp.wifichat.WifiChatActivity
 
 
 class DirectReplyReceiver : BroadcastReceiver() {
-    lateinit var notificationManager: NotificationManagerCompat
-    lateinit var notificationBuilder: NotificationCompat.Builder
 
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
@@ -43,11 +42,7 @@ class DirectReplyReceiver : BroadcastReceiver() {
             //now send this reply to the service or writer
             LocalBroadcastManager.getInstance(context).sendBroadcast(i)
 
-            ;
-            //context.sendBroadcast(i)
-
-            //ReadingService().sendChannel1Notification(context, Message("hello", "me"))
-            WifiChatActivity().sendChannel1Notification(context, replyText.toString())
+            ReadingService().sendChannel1Notification(context, replyText)
 
 
         }else{

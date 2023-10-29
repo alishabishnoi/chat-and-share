@@ -3,7 +3,6 @@ package com.chatapp.wifichat
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.util.Log
-import com.chatapp.walkie.SocketHandler
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -17,7 +16,12 @@ import java.nio.ByteBuffer
 * */
 
 @SuppressLint("MissingPermission")
-class Writer(val handler: Handler,val fileUri:String,val byteArray: ByteArray) : Runnable {
+class Writer(
+    val handler: Handler,
+    val fileUri: String,
+    val byteArray: ByteArray,
+    val outputStream: OutputStream
+) : Runnable {
     private val TAG = "Writer"
 
     var keepRecording = true
@@ -25,21 +29,16 @@ class Writer(val handler: Handler,val fileUri:String,val byteArray: ByteArray) :
     override fun run() {
         try {
             //will will send the audio byte thorough output stream into  socket
-            val outputStream = SocketHandler.socket!!.getOutputStream()
+            //val outputStream = HandleSocket.socket!!.getOutputStream()
 
-           if (keepRecording){
 
-                val writeToOutputStream = Runnable {
-                    try {
-                        Log.e("AUDIO", "STARTED RECORDING")
-                        putFile(fileUri,outputStream,byteArray)
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
+            if (keepRecording) {
+                try {
+                    Log.e("AUDIO", "STARTED RECORDING")
+                    putFile(fileUri, outputStream, byteArray)
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
-                val thread = Thread(writeToOutputStream)
-                thread.start()
-
             }
 
         } catch (e: IOException) {
@@ -57,12 +56,12 @@ class Writer(val handler: Handler,val fileUri:String,val byteArray: ByteArray) :
         //first get the file size if it 0 then send message
         val selectedFileSize = File(fileUri).length().toInt()
 
-        handler.obtainMessage(WifiChatActivity.STATE_MESSAGE_SEND, -1, -1, messageByteArray).sendToTarget()
+        handler.obtainMessage(WifiChatActivity.STATE_MESSAGE_SEND, -1, -1, messageByteArray)
+            .sendToTarget()
 
         val message = messageByteArray!!.toString(Charsets.UTF_8)
         val prefix = message.split("#")
         //val name = prefix[1].split("/")
-
 
 
         val fileBytes: ByteArray
@@ -108,7 +107,8 @@ class Writer(val handler: Handler,val fileUri:String,val byteArray: ByteArray) :
                 }
 
                 bytesRead = bis.read(buffer, 0, buffer.size)
-                val progressWriting = (totalBytesRead.toFloat() / fileBytes.size.toFloat() * 100).toInt()
+                val progressWriting =
+                    (totalBytesRead.toFloat() / fileBytes.size.toFloat() * 100).toInt()
                 Log.d("** file writing", "writing $progressWriting")
 
                 //handler.obtainMessage(WifiP2P.STATE_PROGRESS, -1, -1, progressWriting).sendToTarget()

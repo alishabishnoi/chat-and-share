@@ -12,7 +12,6 @@ interface Dao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertChats(model: chat)
-    //fun addQuizQuestion(quotes: List<OfflineModel>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertUser(model: Users)
@@ -25,10 +24,10 @@ interface Dao {
     fun getAllUsers():List<Users>
 
     @Query("SELECT * from users Where address LIKE :address ")
-    fun getOneQuiz(address :String): Users
+    fun getOneUser(address :String): Users
 
-    @Query("SELECT id,type,sender,receiver,image,msg,timestamp,file,isSeen from chats Where type LIKE :setNo")
-    fun getOneChat(setNo :String): List<chat>
+    @Query("SELECT id,type,sender,receiver,image,msg,timestamp,file,isSeen from chats Where type LIKE :type1")
+    fun getOneChat(type1 :String): List<chat>
 
     @Delete
     fun delete(model: chat)

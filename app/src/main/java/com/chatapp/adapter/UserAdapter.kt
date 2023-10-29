@@ -9,12 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.chatapp.R
 import com.chatapp.bluetooth.ChatActivity
 import com.chatapp.bluetooth.DeviceListActivity.Companion.EXTRA_DEVICE_ADDRESS
+import com.chatapp.bluetooth.finishInterface
 import com.chatapp.models.Users
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -35,7 +35,6 @@ class UserAdapter(val context: Context, var list: List<Users>) : RecyclerView.Ad
 
         holder.lastSeen.text=getDate(System.currentTimeMillis(), "hh:mm:ss")
 
-
         holder.card.setOnClickListener {
             // Get the device MAC address, which is the last 17 chars in the View
             // Create the result Intent and include the MAC address
@@ -45,12 +44,6 @@ class UserAdapter(val context: Context, var list: List<Users>) : RecyclerView.Ad
             // Set result and finish this Activity
             context.startActivity(intent)
         }
-
-
-
-
-
-
     }
 
     override fun getItemCount(): Int {

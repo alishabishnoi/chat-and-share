@@ -50,6 +50,7 @@ import com.amulyakhare.textdrawable.TextDrawable
 import com.chatapp.DirectReplyReceiver
 import com.chatapp.R
 import com.chatapp.adapter.ChatAdapter
+import com.chatapp.bluetooth.FileHelper
 import com.chatapp.bluetooth.FilePickerHelper
 import com.chatapp.databinding.ActivityWifiP2PBinding
 import com.chatapp.databinding.BottomSheetBinding
@@ -57,13 +58,14 @@ import com.chatapp.db.OfflineDatabase
 import com.chatapp.models.chat
 import com.chatapp.utils.CustomToast
 import com.chatapp.utils.PermissionManager
-import com.chatapp.walkie.SocketHandler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -88,15 +90,22 @@ class WifiChatActivity : AppCompatActivity() {
     private var mReceiver: BroadcastReceiver? = null
     private var mIntentFilter: IntentFilter? = null
 
+    var CHANNEL_1_ID = "channel1"
+
     var isConnected = false
 
     private var custom_peers = ArrayList<WifiP2pDevice>()
     private lateinit var deviceNameArray: Array<String?>
     private lateinit var devicesArray: Array<WifiP2pDevice?>
 
+    private var inputStream: InputStream? = null
+    private var outputStream: OutputStream? = null
+
     private var serverClass1: ServerClass? = null
     private var clientClass1: ClientClass? = null
     private var isHost = false
+
+    var socket = Socket()
 
     var database: OfflineDatabase? = null
 
@@ -113,17 +122,15 @@ class WifiChatActivity : AppCompatActivity() {
     var deviceName: String = ""
     var deviceAddress: String = ""
 
-    lateinit var device: WifiP2pDevice
+    lateinit var connectedDevice: WifiP2pDevice
 
     private lateinit var permissionManager: PermissionManager
     private val storagePermission = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
     private val locationPermission = arrayOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
+        Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
     )
 
     fun setIsWifiP2pEnabled(isWifiP2pEnabled: Boolean) {
@@ -256,7 +263,7 @@ class WifiChatActivity : AppCompatActivity() {
         if (mChannel == null) {
             toast("Cannot initialize Wi-Fi Direct")
             return false
-        }else{
+        } else {
             if (mManager != null && mChannel != null) {
                 removeGroup()
             }
@@ -325,35 +332,38 @@ class WifiChatActivity : AppCompatActivity() {
         //to send message
         binding.sendButton.setOnClickListener {
             if (isConnected) {
-                //this send message is also a blocking call so do in bg
-                val executorService = Executors.newSingleThreadExecutor()
                 val msg = binding.writeMsg.text.toString()
-                executorService.execute {
-                    if (msg.isNotEmpty() && isHost) {
-                        //means we are writing from server class
-                        val finalMessage = "msg#$msg"
-                        val send = finalMessage.toByteArray()
-                        writeWriter("", send)
+                if (msg.isNotEmpty() && isHost) {
+                    //means we are writing from server class
+                    val finalMessage = "msg#$msg"
+                    val send = finalMessage.toByteArray()
+                    writeWriter("", send)
 
-                        //empty the edittext and buffer otherwise it will add last chars in the next message
-                        runOnUiThread {
-                            mOutStringBuffer.setLength(0)
-                            binding.writeMsg.setText(mOutStringBuffer)
-                        }
+                    //empty the edittext and buffer otherwise it will add last chars in the next message
+                    runOnUiThread {
+                        mOutStringBuffer.setLength(0)
+                        binding.writeMsg.setText(mOutStringBuffer)
+                    }
 
-                    } else if (msg.isNotEmpty()) {
-                        //this time we are writing from client class
-                        val finalMessage = "msg#$msg"
-                        val send = finalMessage.toByteArray()
+                } else if (msg.isNotEmpty()) {
+                    //this time we are writing from client class
+                    val finalMessage = "msg#$msg"
+                    val send = finalMessage.toByteArray()
 
-                        writeWriter("", send)
+                    writeWriter("", send)
 
-                        runOnUiThread {
-                            mOutStringBuffer.setLength(0)
-                            binding.writeMsg.setText(mOutStringBuffer)
-                        }
+                    runOnUiThread {
+                        mOutStringBuffer.setLength(0)
+                        binding.writeMsg.setText(mOutStringBuffer)
                     }
                 }
+
+                /*//this send message is also a blocking call so do in bg
+                val executorService = Executors.newSingleThreadExecutor()
+
+                executorService.execute {
+
+                }*/
             } else {
                 toast("You are not connected")
             }
@@ -459,7 +469,10 @@ class WifiChatActivity : AppCompatActivity() {
         chatAdapter.notifyItemInserted(chatList.size - 1)
         binding.chatRecyclerView.scrollToPosition(chatList.size - 1)
 
-        insertSqlite(sender, receiver, msg, time)
+        if (isConnected) {
+            insertSqlite("deviceName", deviceName, msg, time)
+        }
+
         //chatAdapter.notifyDataSetChanged()
     }
 
@@ -492,7 +505,6 @@ class WifiChatActivity : AppCompatActivity() {
         super.onPause()
         if (D) Log.e(TAG, "+++ ON PAUSE +++")
         HandleSocket.activityStatus = "pause"
-
     }
 
     override fun onStop() {
@@ -514,7 +526,7 @@ class WifiChatActivity : AppCompatActivity() {
 
         //stop service
         val broadcastIntent = Intent(this, ReadingService::class.java)
-        //broadcastIntent.action = "toogle"
+        broadcastIntent.action = "toogle"
         stopService(broadcastIntent)
 
         try {
@@ -528,81 +540,78 @@ class WifiChatActivity : AppCompatActivity() {
     }
 
     inner class ClientClass(hostAddress: InetAddress) : Thread() {
-        private var clientSocket: Socket
         private var hostAddress: String
-        private var inputStream: InputStream? = null
-        private var outputStream: OutputStream? = null
+
 
         init {
             //get the server address
             this.hostAddress = hostAddress.hostAddress!!
             //client will create socket and connect with the host or say server
-            clientSocket = Socket()
         }
 
         override fun run() {
-            Log.d(TAG, "run: ")
+            Log.d(TAG, "client class run ")
             try {
-                clientSocket.connect(InetSocketAddress(hostAddress, 8888))
+                socket.connect(InetSocketAddress(hostAddress, 8889))
                 //set this socket to handle in service
-                //HandleSocket.socket = clientSocket
-                SocketHandler.socket = clientSocket
+                HandleSocket.socket = socket
+
                 //now get stream from this socket
-                inputStream = clientSocket.getInputStream()
-                outputStream = clientSocket.getOutputStream()
+                inputStream = socket.getInputStream()
+                outputStream = socket.getOutputStream()
+
+                /*//run on bg thread
+                val executorService = Executors.newSingleThreadExecutor()
+                //val handler = Handler(Looper.getMainLooper())
+                executorService.execute {
+                    Log.d(TAG, "executor: ")
+                    while (!socket.equals(null)) {
+                        Log.d(TAG, "while: ")
+                        try {
+                            // Read from the InputStream
+                            getFile(inputStream!!)
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                    }
+                }*/
+
 
                 startServices()
+
             } catch (e: IOException) {
                 e.printStackTrace()
             }
 
-            /*//run on bg thread
-            val executorService = Executors.newSingleThreadExecutor()
-            //val handler = Handler(Looper.getMainLooper())
-            executorService.execute {
-                Log.d(TAG, "executor: ")
-                while (socket != null) {
-                    Log.d(TAG, "while: ")
-                    try {
-                        // Read from the InputStream
-                        getFile(inputStream!!)
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                }
-            }*/
+
         }
 
 
     }
 
     inner class ServerClass : Thread() {
-        private var socket1: Socket? = null
+
         private var serverSocket: ServerSocket? = null
-        private var inputStream: InputStream? = null
-        private var outputStream: OutputStream? = null
 
         override fun run() {
-            Log.d(TAG, "run: ")
+            Log.d(TAG, "server class run")
             try {
-                serverSocket = ServerSocket(8888)
+                serverSocket = ServerSocket(8889)
                 //first connect this socket to  server socket the get and out the stream
-                socket1 = serverSocket!!.accept()
+                socket = serverSocket!!.accept()
+
+                HandleSocket.socket = socket
                 //set this socket to handle in service
-                //HandleSocket.socket = socket1
-                SocketHandler.socket = socket1
 
-
-                inputStream = socket1!!.getInputStream()
-                //getFile(inputStream!!)
-                outputStream = socket1!!.getOutputStream()
-                //SocketHandler.socket = socket1
+                inputStream = socket.getInputStream()
+                outputStream = socket.getOutputStream()
 
                 startServices()
+
+
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
 
 
         }
@@ -611,8 +620,10 @@ class WifiChatActivity : AppCompatActivity() {
     }
 
 
+
+
     private fun writeWriter(fileURI: String, send: ByteArray) {
-        val writer = Writer(handler, fileURI, send)
+        val writer = Writer(handler, fileURI, send, outputStream!!)
         val t = Thread(writer)
 
         writer.keepRecording = true
@@ -633,14 +644,14 @@ class WifiChatActivity : AppCompatActivity() {
                     val message = resultData["message"] as String?
                     Log.d("from reading service", "onReceiveResult: $message")
                     if (message != null) {
-                        if (message == "serviceStoppedByOther"){
+                        if (message == "serviceStoppedByOther") {
                             //send this message to the other
-                            val ms="serviceStoppedByOther"
+                            val ms = "serviceStoppedByOther"
                             val finalMessage = "msg#$ms"
                             val send = finalMessage.toByteArray()
 
                             writeWriter("", send)
-                        }else{
+                        } else {
                             handler.obtainMessage(
                                 STATE_MESSAGE_RECEIVED,
                                 message.toByteArray().size,
@@ -664,7 +675,7 @@ class WifiChatActivity : AppCompatActivity() {
                 }*/
             }
         })
-        startService(readingServiceIntent)
+        startForegroundService(readingServiceIntent)
         Log.d(TAG, "-----------------: started services")
     }
 
@@ -708,16 +719,15 @@ class WifiChatActivity : AppCompatActivity() {
 
                 val receivedMessage = String(readBuff, 0, readBuff.size)
                 Log.d("''''''read''''''", "handleMessage: $receivedMessage")
-                val perfix=receivedMessage.split("#")[1]
-                if (perfix=="serviceStoppedByOther"){
+                val perfix = receivedMessage.split("#")[1]
+                if (perfix == "serviceStoppedByOther") {
                     //stop service
                     val broadcastIntent = Intent(this, ReadingService::class.java)
                     broadcastIntent.action = "toogle"
                     startService(broadcastIntent)
-                }else{
+                } else {
                     setRecycler("sender", "me", receivedMessage)
                 }
-
 
 
             }
@@ -747,8 +757,6 @@ class WifiChatActivity : AppCompatActivity() {
 
 
     private fun showSheet() {
-
-
         if (isWifiP2pEnabled) {
             sheetBinding.imgWifi.setImageResource(R.drawable.ic_wifi_on)
         } else {
@@ -764,13 +772,13 @@ class WifiChatActivity : AppCompatActivity() {
         //when we click on an item from the peers list we will try to connect
         sheetBinding.peerListView.onItemClickListener =
             OnItemClickListener { adapterView, view, i, l ->
-                var device1 = devicesArray[i]
+                val device = devicesArray[i]
                 val config = WifiP2pConfig()
-                config.deviceAddress = device1!!.deviceAddress
+                config.deviceAddress = device!!.deviceAddress
                 mManager!!.connect(mChannel, config, object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        setStatusTitle(device1.deviceName)
-                        device = device1
+                        setStatusTitle(device.deviceName)
+                        connectedDevice = device
                         isConnected = true
                         val message = Message.obtain()
                         message.what = STATE_CONNECTING
@@ -850,9 +858,7 @@ class WifiChatActivity : AppCompatActivity() {
 
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String?>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION && permissionManager.handleRequestResult(grantResults)) {
@@ -924,7 +930,7 @@ class WifiChatActivity : AppCompatActivity() {
         if (item.itemId == R.id.disconnect) {
             /// Ensure this device is discoverable by others
             if (isConnected) {
-                disconnectDevice(device)
+                disconnectDevice(connectedDevice)
             }
             return true
         }
@@ -957,8 +963,7 @@ class WifiChatActivity : AppCompatActivity() {
             super.onBackPressed()
         }.setNegativeButton("Cancel") { dialogInterface, _ ->
             dialogInterface.dismiss()
-        }.setMessage("You chat session will be disconnected")
-            .setTitle("Exit Chat").create()
+        }.setMessage("You chat session will be disconnected").setTitle("Exit Chat").create()
         mDialog.show()
     }
 
@@ -988,9 +993,9 @@ class WifiChatActivity : AppCompatActivity() {
         }
     }
 
-    fun insertSqlite(sender: String, receiver: String, msg: String, time: String) {
+    private fun insertSqlite(sender: String, receiver: String, msg: String, time: String) {
         val oirModel = chat(
-            0, "", sender, receiver, R.drawable.happyicon, msg, time, "", true
+            0, "wifi", sender, receiver, R.drawable.happyicon, msg, time, "", true
         )
 
         GlobalScope.launch(Dispatchers.IO) {

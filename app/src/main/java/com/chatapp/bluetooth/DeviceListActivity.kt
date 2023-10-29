@@ -23,7 +23,7 @@ import com.chatapp.databinding.ActDeviceListBinding
  * Activity in the result Intent.
  */
 @SuppressLint("MissingPermission")
-class DeviceListActivity : AppCompatActivity() {
+class DeviceListActivity : AppCompatActivity(),finishInterface {
     lateinit var binding: ActDeviceListBinding
 
     // Member fields
@@ -78,7 +78,7 @@ class DeviceListActivity : AppCompatActivity() {
         }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        devicesAdapter = devicesAdapter(this, deviceList)
+        devicesAdapter = devicesAdapter(this, deviceList,this@DeviceListActivity)
         binding.recyclerView.adapter = devicesAdapter
 
         // Initialize the button to perform device discovery
@@ -142,8 +142,9 @@ class DeviceListActivity : AppCompatActivity() {
         }
     }
 
-
-
+    override fun finish1() {
+        finish()
+    }
 
 
 }

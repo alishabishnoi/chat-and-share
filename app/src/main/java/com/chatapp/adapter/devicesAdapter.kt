@@ -16,9 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chatapp.R
 import com.chatapp.bluetooth.ChatActivity
 import com.chatapp.bluetooth.DeviceListActivity.Companion.EXTRA_DEVICE_ADDRESS
+import com.chatapp.bluetooth.finishInterface
 
 @SuppressLint("MissingPermission")
-class devicesAdapter(val context: Context, var list: ArrayList<BluetoothDevice>) : RecyclerView.Adapter<devicesAdapter.AppViewHolder>() {
+class devicesAdapter(val context: Context, var list: ArrayList<BluetoothDevice>,val finishInterface: finishInterface) : RecyclerView.Adapter<devicesAdapter.AppViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
         return AppViewHolder(
@@ -39,6 +40,7 @@ class devicesAdapter(val context: Context, var list: ArrayList<BluetoothDevice>)
             intent.putExtra(EXTRA_DEVICE_ADDRESS, list[position].address)
             // Set result and finish this Activity
             context.startActivity(intent)
+            finishInterface.finish1()
         }
 
         if (list[position].bondState==10){
