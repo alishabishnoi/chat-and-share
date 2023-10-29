@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
-import android.os.PowerManager
 import android.os.PowerManager.WakeLock
 import android.os.ResultReceiver
 import android.text.format.Formatter
@@ -21,16 +20,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.chatapp.DirectReplyReceiver
 import com.chatapp.Message
 import com.chatapp.R
 import com.chatapp.bluetooth.FileHelper
-import com.chatapp.utils.Notification.sendChannel1Notification
-import com.chatapp.walkie.SocketHandler
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
@@ -85,6 +80,7 @@ class ReadingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent!!.action == ACTION_TOGGLE) {
+            Log.d(TAG, "on stop Command: from chat activity on destroy")
             stopForeground(true)
             stopSelf()
             this.stopService(intent)
@@ -135,11 +131,13 @@ class ReadingService : Service() {
     override fun onDestroy() {
         serviceEnabled = false
 
+        sendActivityMessage("serviceStoppedByOther")
+
         //releaseCPU()
 
         //Signal that the service was stopped
-        stopSelf()
-        sendActivityMessage("serviceStoppedByOther")
+        //stopSelf()
+
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -246,10 +244,9 @@ class ReadingService : Service() {
                 } else {
                     Log.d("** reading file", "it was a message")
                     // Send the obtained bytes to the UI Activity
+                    sendActivityMessage(fileName)
                     if (HandleSocket.activityStatus == "pause" || HandleSocket.activityStatus == "stop") {
                         sendChannel1Notification(this, prefix[1])
-                    } else {
-                        sendActivityMessage(fileName)
                     }
                 }
             }
@@ -275,7 +272,7 @@ class ReadingService : Service() {
             .setLabel("Your answer...")
             .build()
         val replyPendingIntent: PendingIntent?
-        val replyIntent = Intent(context, DirectReplyReceiver::class.java)
+        val replyIntent = Intent(context, ReplyReceiverWifi::class.java)
         replyIntent.putExtra("reply", message)
         replyPendingIntent = PendingIntent.getBroadcast(
             context,
@@ -304,7 +301,7 @@ class ReadingService : Service() {
             .addMessage(message, System.currentTimeMillis(), person)
 
         val notification: Notification = NotificationCompat.Builder(context!!, "channel1")
-            .setSmallIcon(R.drawable.app_icon)
+            .setSmallIcon(R.drawable.ic_wifi_on)
             .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_wifi_on))
             //.setStyle(messagingStyle)
             .setStyle(notificationStyle)

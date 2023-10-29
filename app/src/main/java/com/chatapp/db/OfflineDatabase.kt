@@ -14,7 +14,7 @@ import com.chatapp.utils.DataConverter
 @Keep
 @Database(entities = [chat::class,Users::class] ,version = 1)
 //abstract method or class means without body
-@TypeConverters(DataConverter::class)
+//@TypeConverters(DataConverter::class)
 abstract class OfflineDatabase : RoomDatabase() {
     abstract fun insertDao(): Dao
 

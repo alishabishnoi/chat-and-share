@@ -26,6 +26,9 @@ interface Dao {
     @Query("SELECT * from users Where address LIKE :address ")
     fun getOneUser(address :String): Users
 
+    @Query("SELECT * from users Where address LIKE :address ")
+    fun isUserExist(address :String): Int
+
     @Query("SELECT id,type,sender,receiver,image,msg,timestamp,file,isSeen from chats Where type LIKE :type1")
     fun getOneChat(type1 :String): List<chat>
 

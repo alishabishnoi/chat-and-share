@@ -19,7 +19,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.chatapp.DirectReplyReceiver;
+import com.chatapp.wifichat.ReplyReceiverWifi;
 import com.chatapp.Message;
 import com.chatapp.R;
 import com.chatapp.bluetooth.BluetoothUsersActivity;
@@ -74,7 +74,7 @@ public class Notification extends AppCompatActivity {
         Intent replyIntent;
         PendingIntent replyPendingIntent = null;
 
-        replyIntent = new Intent(context, DirectReplyReceiver.class);
+        replyIntent = new Intent(context, ReplyReceiverWifi.class);
         replyPendingIntent = PendingIntent.getBroadcast(context,
                 0, replyIntent, PendingIntent.FLAG_IMMUTABLE);
 

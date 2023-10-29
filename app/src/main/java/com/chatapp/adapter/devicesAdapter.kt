@@ -36,7 +36,7 @@ class devicesAdapter(val context: Context, var list: ArrayList<BluetoothDevice>,
             // Get the device MAC address, which is the last 17 chars in the View
             // Create the result Intent and include the MAC address
             val intent = Intent(context, ChatActivity::class.java)
-            intent.putExtra(EXTRA_DEVICE, list[position])
+            //intent.putExtra(EXTRA_DEVICE, list[position])
             intent.putExtra(EXTRA_DEVICE_ADDRESS, list[position].address)
             // Set result and finish this Activity
             context.startActivity(intent)

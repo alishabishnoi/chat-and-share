@@ -4,7 +4,10 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -19,6 +22,7 @@ import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chatapp.R
@@ -32,6 +36,7 @@ import com.chatapp.wifichat.HandleSocket
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -48,6 +53,8 @@ class ChatActivity : AppCompatActivity() {
 
     // Name of the connected device
     private lateinit var mConnectedDeviceName: String
+    private lateinit var mConnectedDeviceAddress: String
+    private lateinit var thisDeviceAddress: String
 
     // String buffer for outgoing messages
     private lateinit var mOutStringBuffer: StringBuffer
@@ -60,10 +67,6 @@ class ChatActivity : AppCompatActivity() {
 
     var database: OfflineDatabase? = null
 
-    /**
-     * device: The Bluetooth Device that will receive the file contents.
-     */
-    private var device: BluetoothDevice? = null
 
     /**
      * fileURI: The URI for the file of interest on the current phone.
@@ -90,12 +93,14 @@ class ChatActivity : AppCompatActivity() {
         const val MESSAGE_READ = 2
         const val MESSAGE_WRITE = 3
         const val MESSAGE_DEVICE_NAME = 4
+        const val MESSAGE_DEVICE_ADDRESS = 8
         const val MESSAGE_TOAST = 5
         const val MESSAGE_PROGRESS_SENT = 6
         const val MESSAGE_PROGRESS_READ = 7
 
         // Key names received from the BluetoothChatService Handler
         const val DEVICE_NAME = "device_name"
+        const val DEVICE_ADDRESS = "device_address"
         const val TOAST = "toast"
 
         // Intent request codes
@@ -111,15 +116,28 @@ class ChatActivity : AppCompatActivity() {
         // Set up the window layout
         binding = ActChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        HandleSocket.activityBlueStatus = "create"
+
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter.equals(null)) {
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show()
             finish()
+        } else {
+            thisDeviceAddress = mBluetoothAdapter.name
         }
 
+        binding.writeMsg.setSelection(0)
+
         permissionManager = PermissionManager.getInstance(this)
+
+        /*if (!permissionManager.methodCheckPermission(permission1)) {
+            permissionManager.methodAskPermission(
+                this, permission1, 100
+            )
+        }*/
 
         //initialize room database to get all his methods
         database = OfflineDatabase.getDatabase(this)
@@ -133,27 +151,32 @@ class ChatActivity : AppCompatActivity() {
             // Update the user textview
             //get the bluetooth device from the list actvity intent
 
-            device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+            mConnectedDeviceAddress = intent.getStringExtra("device_address").toString()
+            Log.d(TAG, "onCreate: $mConnectedDeviceAddress")
 
             binding.chatRecyclerView.layoutManager = LinearLayoutManager(
                 this, RecyclerView.VERTICAL, false
             )
-            chatAdapter = ChatAdapter(this, chatList, device!!.name)
+            chatAdapter = ChatAdapter(this, chatList, thisDeviceAddress)
             binding.chatRecyclerView.adapter = chatAdapter
-            setupChat(device)
+            setupChat()
         }
+
+        //this receiver will listen for reply
+        val filter = IntentFilter()
+        filter.addAction("android.intent.action.BluetoothReply")
+        LocalBroadcastManager.getInstance(this).registerReceiver(mServiceReceiver, filter)
 
 
     }
 
-    fun setRecycler(sender: String, receiver: String, msg: String?) {
-        val time = getDate(System.currentTimeMillis(), "hh:mm:ss")
-        val chatModel =
-            chat(0, "", sender, receiver, R.drawable.happyicon, msg!!, time!!, "", false)
+    fun setRecycler(thisAddress: String, msg: String?) {
+        val time = getDate(System.currentTimeMillis(), "hh:mm aa")
+        val chatModel = chat(0, "", mConnectedDeviceAddress, thisAddress, R.drawable.happyicon, msg!!, time!!, "", false)
         chatList.add(chatModel)
         chatAdapter.notifyItemInserted(chatList.size - 1)
         binding.chatRecyclerView.scrollToPosition(chatList.size - 1)
-        insertBlueChat(device!!.name, receiver, msg, time)
+        insertBlueChat(mConnectedDeviceAddress, thisDeviceAddress, msg, time)
     }
 
     private fun getDate(milliSeconds: Long, dateFormat: String?): String? {
@@ -169,7 +192,9 @@ class ChatActivity : AppCompatActivity() {
     public override fun onStart() {
         super.onStart()
         if (D) Log.e(TAG, "++ ON START ++")
-        device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+        HandleSocket.activityBlueStatus = "start"
+        mConnectedDeviceAddress = intent.getStringExtra("device_address").toString()
+        Log.d(TAG, "onStart: $mConnectedDeviceAddress")
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled) {
@@ -177,7 +202,7 @@ class ChatActivity : AppCompatActivity() {
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT)
             // Otherwise, setup the chat session
         } else {
-            if (mChatService.equals(null)) setupChat(device)
+            if (mChatService.equals(null)) setupChat()
         }
 
     }
@@ -211,16 +236,16 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupChat(device: BluetoothDevice?) {
+    private fun setupChat() {
         Log.d(TAG, "setupChat()")
 
         // Initialize the compose field with a listener for the return key
-        binding.mOutEditText.setOnEditorActionListener(mWriteListener)
+        binding.writeMsg.setOnEditorActionListener(mWriteListener)
 
         // Initialize the send button with a listener that for click events
-        binding.mSendButton.setOnClickListener(View.OnClickListener {
+        binding.sendButton.setOnClickListener(View.OnClickListener {
             // Send a message using content of the edit text widget
-            val message = binding.mOutEditText.text.toString()
+            val message = binding.writeMsg.text.toString()
             sendMessage(message)
 
         })
@@ -229,7 +254,7 @@ class ChatActivity : AppCompatActivity() {
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = StringBuffer()
 
-        connectDevice(intent, true)
+        connectDevice(mConnectedDeviceAddress, true)
 
     }
 
@@ -251,9 +276,21 @@ class ChatActivity : AppCompatActivity() {
         // Stop the Bluetooth chat services
         HandleSocket.activityBlueStatus = "destroy"
 
+        //insert into  database this device
+        insertBlueUser(
+            mConnectedDeviceName,
+            mConnectedDeviceAddress,
+            thisDeviceAddress,
+            chatList[chatList.size-1].msg,
+            System.currentTimeMillis()
+        )
+
         if (mChatService.equals(null)) mChatService.stop()
         isConnected = false
         if (D) Log.e(TAG, "--- ON DESTROY ---")
+        val msgg = "disconnectByOtherUser"
+        val finalMessage = "msg#$msgg"
+        mChatService.writeFile("fileURI", finalMessage.toByteArray())
     }
 
     private fun ensureDiscoverable() {
@@ -285,7 +322,7 @@ class ChatActivity : AppCompatActivity() {
             mChatService.writeFile("fileURI", send)
             // Reset out string buffer to zero and clear the edit text field
             mOutStringBuffer.setLength(0)
-            binding.mOutEditText.setText(mOutStringBuffer)
+            binding.writeMsg.setText(mOutStringBuffer)
         } else {
             send()
         }
@@ -301,6 +338,38 @@ class ChatActivity : AppCompatActivity() {
             if (D) Log.i(TAG, "END onEditorAction")
             true
         }
+
+    private val mServiceReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+
+            val stop = intent.getStringExtra("stop")
+            //Extract your data - better to use constants...
+            val replyText = intent.getStringExtra("bluetoothReply")
+
+            if (stop.equals("stop")) {
+                //means service is stopped
+                isConnected = false
+                setStatusSubTitle("Disconnected")
+                toast("Search New Peers")
+            } else {
+                val finalMessage = "msg#$replyText"
+
+                Log.d(TAG, "onReceive: reply $replyText ")
+                //now we have reply and we can pass write it to writer
+                if (isConnected) {
+                    //mChatService.write(send)
+                    mChatService.writeFile("fileURI", finalMessage.toByteArray())
+                    // Reset out string buffer to zero and clear the edit text field
+                    mOutStringBuffer.setLength(0)
+                    binding.writeMsg.setText(mOutStringBuffer)
+                } else {
+                    toast("You are not Connected")
+                }
+            }
+
+
+        }
+    }
 
     private fun setStatusSubTitle(resId: Int) {
         val actionBar = supportActionBar
@@ -330,14 +399,7 @@ class ChatActivity : AppCompatActivity() {
                             setStatusSubTitle("online")
                             //chatList.clear()
                             isConnected = true
-                            //insert into  database this device
-                            insertBlueUser(
-                                device!!.name,
-                                device!!.address,
-                                device!!,
-                                "last ",
-                                System.currentTimeMillis()
-                            )
+
                         }
 
                         ChatService.STATE_CONNECTING -> setStatusSubTitle(R.string.title_connecting)
@@ -358,7 +420,7 @@ class ChatActivity : AppCompatActivity() {
                     // construct a string from the buffer
                     val writeMessage = writeBuf.toString(Charsets.UTF_8)
                     Log.d("--bluetooth Msg Write", "handler write: $writeMessage")
-                    setRecycler(mConnectedDeviceName, "me", writeMessage)
+                    setRecycler(thisDeviceAddress, writeMessage)
 
                 }
 
@@ -368,44 +430,33 @@ class ChatActivity : AppCompatActivity() {
                     // construct a string from the valid bytes in the buffer
                     val readMessage = readBuf.toString(Charsets.UTF_8)
                     Log.d("--bluetooth Msg Read", "handleMess read: $readMessage")
-                    setRecycler("me", mConnectedDeviceName, readMessage)
-                }
+                    val perfix = readMessage.split("#")[1]
+                    if (perfix == "disconnectByOtherUser") {
+                        Log.d(TAG, "stop chat called")
+                        //stop service
+                        if (!mChatService.equals(null)) {
+                            mChatService.stop()
+                            isConnected = false
+                        }
 
-                MESSAGE_PROGRESS_SENT -> {
-                    val readBuff = msg.obj as Int
-
-                    binding.progressFileSent.progress = readBuff
-                    binding.tvFileSent.text = readBuff.toString()
-
-                    Log.d("''''''progress''''''", "send Progress: $readBuff")
-                    if (readBuff > 98) {
-                        binding.layBottom.visibility = View.VISIBLE
-                        binding.layoutFile.visibility = View.GONE
+                    } else {
+                        setRecycler(mConnectedDeviceAddress,readMessage)
                     }
-                }
 
-                MESSAGE_PROGRESS_READ -> {
-                    val readBuff = msg.obj as Int
-
-                    binding.progressFileSent.progress = readBuff
-                    binding.tvFileSent.text = readBuff.toString()
-
-                    Log.d("''''''progress''''''", "read Progress: $readBuff")
-
-                    if (readBuff > 98) {
-                        binding.layBottom.visibility = View.VISIBLE
-                        binding.layoutFile.visibility = View.GONE
-                    }
                 }
 
                 MESSAGE_DEVICE_NAME -> {
                     // save the connected device's name
                     mConnectedDeviceName = msg.data.getString(DEVICE_NAME).toString()
                     Toast.makeText(
-                        applicationContext,
-                        "Connected to $mConnectedDeviceName",
-                        Toast.LENGTH_SHORT
+                        applicationContext, "Connected to $mConnectedDeviceName", Toast.LENGTH_SHORT
                     ).show()
+                }
+
+                MESSAGE_DEVICE_ADDRESS -> {
+                    // save the connected device's name
+                    mConnectedDeviceAddress = msg.data.getString(DEVICE_ADDRESS).toString()
+
                 }
 
                 MESSAGE_TOAST -> Toast.makeText(
@@ -420,7 +471,7 @@ class ChatActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (D) Log.d(TAG, "onActivityResult $resultCode")
         when (requestCode) {
-            REQUEST_CONNECT_DEVICE_SECURE ->                 // When DeviceListActivity returns with a device to connect
+           /* REQUEST_CONNECT_DEVICE_SECURE ->                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == RESULT_OK) {
                     connectDevice(data, true)
                 }
@@ -428,12 +479,12 @@ class ChatActivity : AppCompatActivity() {
             REQUEST_CONNECT_DEVICE_INSECURE ->                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == RESULT_OK) {
                     connectDevice(data, false)
-                }
+                }*/
 
             REQUEST_ENABLE_BT ->                 // When the request to enable Bluetooth returns
                 if (resultCode == RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    setupChat(device)
+                    setupChat()
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled")
@@ -479,9 +530,9 @@ class ChatActivity : AppCompatActivity() {
         binding.tvFileTotalSize.text = fileSize
     }
 
-    private fun connectDevice(data: Intent?, secure: Boolean) {
+    private fun connectDevice(address: String, secure: Boolean) {
         // Get the device MAC address
-        val address = data!!.extras!!.getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS)
+        //val address = data!!.extras!!.getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS)
         // Get the BluetoothDevice object
         val device = mBluetoothAdapter.getRemoteDevice(address)
 
@@ -506,7 +557,7 @@ class ChatActivity : AppCompatActivity() {
 
     @Throws(Exception::class)
     fun createBond(btDevice: BluetoothDevice?): Boolean {
-        Log.d(TAG, "createBond: ${device!!.name}")
+        Log.d(TAG, "createBond: ${mConnectedDeviceAddress}")
         val class1 = Class.forName("android.bluetooth.BluetoothDevice")
         val createBondMethod = class1.getMethod("createBond")
         return createBondMethod.invoke(btDevice) as Boolean
@@ -547,8 +598,7 @@ class ChatActivity : AppCompatActivity() {
         // the files be openable on the phone
         val intent = Intent().setType("*/*")
             .setAction(Intent.ACTION_GET_CONTENT) // ACTION_GET_CONTENT refers to the built-in file picker
-            .addCategory(Intent.CATEGORY_OPENABLE)
-            .putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            .addCategory(Intent.CATEGORY_OPENABLE).putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
 
         // Open file picker, and add a requestCode to refer to correct Activity result in startActivityForResult()
         startActivityForResult(Intent.createChooser(intent, "Choose a file"), REQUEST_FILE_PICK)
@@ -614,7 +664,7 @@ class ChatActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     mOutStringBuffer.setLength(0)
-                    binding.mOutEditText.setText(mOutStringBuffer)
+                    binding.writeMsg.setText(mOutStringBuffer)
                 }
 
             }
@@ -633,23 +683,23 @@ class ChatActivity : AppCompatActivity() {
             super.onBackPressed()
         }.setNegativeButton("Cancel") { dialogInterface, _ ->
             dialogInterface.dismiss()
-        }.setMessage("You chat session will be disconnected")
-            .setTitle("Exit Chat").create()
+        }.setMessage("You chat session will be disconnected").setTitle("Exit Chat").create()
         mDialog.show()
     }
 
     fun insertBlueUser(
-        sender: String,
-        address: String,
-        device: BluetoothDevice,
-        msg: String,
-        lastSeen: Long
+        otherName: String, otherAddress: String, thisAddress: String, msg: String, lastSeen: Long
     ) {
-        val oirModel = Users(0, sender, msg, address, device, R.drawable.happyicon, lastSeen)
+        val oirModel =
+            Users(0, otherName, msg, otherAddress, thisAddress, R.drawable.happyicon, lastSeen)
 
-        CoroutineScope(Dispatchers.IO).launch{
-            database!!.insertDao().insertUser(oirModel)
-            Log.d(TAG, "insertSqliteUser: user is inserted into database")
+        CoroutineScope(Dispatchers.IO).launch {
+            //first check if user is exist or not
+            if (database!!.insertDao().isUserExist(otherAddress) == 0) {
+                database!!.insertDao().insertUser(oirModel)
+                Log.d(TAG, "insertSqliteUser: user is inserted into database")
+            }
+
         }
     }
 
@@ -665,7 +715,7 @@ class ChatActivity : AppCompatActivity() {
             0, "bluetooth", sender, receiver, R.drawable.happyicon, msg, time, "", true
         )
 
-        CoroutineScope(Dispatchers.IO).launch {
+        GlobalScope.launch(Dispatchers.IO) {
             database!!.insertDao().insertChats(oirModel)
         }
     }

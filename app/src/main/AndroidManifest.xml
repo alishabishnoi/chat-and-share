@@ -69,7 +69,10 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".DirectReplyReceiver" />
+        <receiver android:name=".wifichat.ReplyReceiverWifi" />
+
+        <receiver android:name=".bluetooth.ReplyReceiverBluetooth"
+            />
 
         <activity
             android:name=".fileshare.WifiScanner"

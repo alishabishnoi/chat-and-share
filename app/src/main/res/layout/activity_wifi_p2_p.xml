@@ -63,46 +63,55 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        android:gravity="bottom"
-        android:layout_margin="5dp"
+        android:gravity="center"
+        android:layout_margin="4dp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <ImageView
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="10"
-            android:layout_height="40dp"
-            android:id="@+id/iPickFile"
-            android:src="@drawable/ic_add_file"/>
-
-        <EditText
-            android:id="@+id/writeMsg"
-            android:layout_width="0dp"
-            android:layout_weight="80"
-            android:layout_height="wrap_content"
+            android:layout_weight="85"
+            android:layout_height="49dp"
+            android:orientation="horizontal"
             android:background="@drawable/shape1"
-            android:ems="10"
-            android:inputType="text"
-            android:padding="10dp"
-            />
+            android:backgroundTint="#F1F1F1"
+            >
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="13"
+                android:layout_height="match_parent"
+                android:id="@+id/iPickFile"
+                android:src="@drawable/ic_add_file"/>
 
-        <ImageView
+            <EditText
+                android:id="@+id/writeMsg"
+                android:layout_width="0dp"
+                android:layout_weight="80"
+                android:layout_height="match_parent"
+                android:hint="Message"
+                android:inputType="text|textNoSuggestions"
+                android:padding="10dp"
+                android:background="@null"
+                />
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_weight="10"
+            android:layout_width="45dp"
             android:layout_height="45dp"
-            android:text="Send"
-            android:src="@drawable/ic_send"
-            android:padding="5dp"
-            android:rotation="330"
-            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            app:fabSize="mini"
+            app:fabCustomSize="45dp"
+            app:maxImageSize="30dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/ic_send"
             />
 
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/layoutFile"

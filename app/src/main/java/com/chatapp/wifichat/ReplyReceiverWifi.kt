@@ -1,9 +1,13 @@
-package com.chatapp
+package com.chatapp.wifichat
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -11,12 +15,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.chatapp.wifichat.HandleSocket
-import com.chatapp.wifichat.ReadingService
-import com.chatapp.wifichat.WifiChatActivity
+import com.chatapp.Message
+import com.chatapp.R
+import com.chatapp.bluetooth.ChatActivity
 
 
-class DirectReplyReceiver : BroadcastReceiver() {
+class ReplyReceiverWifi : BroadcastReceiver() {
 
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
@@ -51,4 +55,6 @@ class DirectReplyReceiver : BroadcastReceiver() {
 
 
     }
+
+
 }

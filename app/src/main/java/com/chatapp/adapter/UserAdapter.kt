@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chatapp.R
 import com.chatapp.bluetooth.ChatActivity
 import com.chatapp.bluetooth.DeviceListActivity.Companion.EXTRA_DEVICE_ADDRESS
-import com.chatapp.bluetooth.finishInterface
 import com.chatapp.models.Users
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -31,7 +30,7 @@ class UserAdapter(val context: Context, var list: List<Users>) : RecyclerView.Ad
 
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         holder.lastMessage.text = list[position].lastMsg
-        holder.deviceAddress.text = list[position].name
+        holder.deviceAddress.text = list[position].otherDeviceName
 
         holder.lastSeen.text=getDate(System.currentTimeMillis(), "hh:mm:ss")
 
@@ -39,8 +38,8 @@ class UserAdapter(val context: Context, var list: List<Users>) : RecyclerView.Ad
             // Get the device MAC address, which is the last 17 chars in the View
             // Create the result Intent and include the MAC address
             val intent = Intent(context, ChatActivity::class.java)
-            intent.putExtra(EXTRA_DEVICE, list[position].device)
-            intent.putExtra(EXTRA_DEVICE_ADDRESS, list[position].address)
+            //intent.putExtra(EXTRA_DEVICE, list[position].otherDeviceAddress)
+            intent.putExtra(EXTRA_DEVICE_ADDRESS, list[position].otherDeviceAddress)
             // Set result and finish this Activity
             context.startActivity(intent)
         }

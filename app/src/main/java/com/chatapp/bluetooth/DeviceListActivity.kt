@@ -38,7 +38,6 @@ class DeviceListActivity : AppCompatActivity(),finishInterface {
         private const val D = true
 
         // Return Intent extra
-        @JvmField
         var EXTRA_DEVICE_ADDRESS = "device_address"
     }
 
@@ -64,18 +63,26 @@ class DeviceListActivity : AppCompatActivity(),finishInterface {
         // Get the local Bluetooth adapter
         mBtAdapter = BluetoothAdapter.getDefaultAdapter()
 
-        // Get a set of currently paired devices
-        val pairedDevices = mBtAdapter.bondedDevices
+        if (!mBtAdapter.isEnabled) {
+            val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableIntent, 1112)
+            // Otherwise, setup the chat session
+        }else{
+            // Get a set of currently paired devices
+            val pairedDevices = mBtAdapter.bondedDevices
 
-        // If there are paired devices, add each one to the ArrayAdapter
-        if (pairedDevices.size > 0) {
-            for (device in pairedDevices) {
+            // If there are paired devices, add each one to the ArrayAdapter
+            if (pairedDevices.size > 0) {
+                for (device in pairedDevices) {
 
-                deviceList.add(device)
+                    deviceList.add(device)
+                }
+            } else {
+                Toast.makeText(this, "No  Device Found", Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(this, "No  Device Found", Toast.LENGTH_SHORT).show()
         }
+
+
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         devicesAdapter = devicesAdapter(this, deviceList,this@DeviceListActivity)

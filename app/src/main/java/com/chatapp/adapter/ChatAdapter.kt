@@ -131,7 +131,7 @@ class ChatAdapter(
 
     override fun getItemViewType(position: Int): Int {
         //this method is to know that who have send the message and which side to show
-        return if (chatList[position].sender == userId) {
+        return if (chatList[position].receiver == userId) {
             MESSAGE_TYPE_RIGHT
         } else {
             MESSAGE_TYPE_LEFT

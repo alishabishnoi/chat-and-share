@@ -3,14 +3,11 @@ package com.chatapp.wifichat
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.app.Notification
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.location.LocationManager
@@ -39,18 +36,12 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.Person
-import androidx.core.app.RemoteInput
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amulyakhare.textdrawable.TextDrawable
-import com.chatapp.DirectReplyReceiver
 import com.chatapp.R
 import com.chatapp.adapter.ChatAdapter
-import com.chatapp.bluetooth.FileHelper
 import com.chatapp.bluetooth.FilePickerHelper
 import com.chatapp.databinding.ActivityWifiP2PBinding
 import com.chatapp.databinding.BottomSheetBinding
@@ -62,11 +53,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.BufferedInputStream
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -74,10 +61,8 @@ import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
-import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.concurrent.Executors
 
 
 @SuppressLint("MissingPermission")
@@ -297,6 +282,8 @@ class WifiChatActivity : AppCompatActivity() {
             }
         }
 
+        binding.writeMsg.setSelection(0)
+
         checkLocationEnabled()
 
         //initialize room database to get all his methods
@@ -463,7 +450,7 @@ class WifiChatActivity : AppCompatActivity() {
 
     private fun setRecycler(sender: String, receiver: String, msg: String?) {
 
-        val time = getDate(System.currentTimeMillis(), "hh:mm:ss")
+        val time = getDate(System.currentTimeMillis(), "hh:mm aa")
         val chatModel = chat(0, "", sender, receiver, R.drawable.happyicon, msg!!, time!!, "", true)
         chatList.add(chatModel)
         chatAdapter.notifyItemInserted(chatList.size - 1)

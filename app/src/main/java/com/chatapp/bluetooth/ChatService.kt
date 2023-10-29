@@ -20,7 +20,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import com.chatapp.Constants
-import com.chatapp.DirectReplyReceiver
+import com.chatapp.wifichat.ReplyReceiverWifi
 import com.chatapp.R
 import com.chatapp.wifichat.HandleSocket
 import com.chatapp.wifichat.WifiChatActivity
@@ -203,6 +203,13 @@ class ChatService(val context: Context?, private val mHandler: Handler) {
         bundle.putString(Constants.DEVICE_NAME, device.name)
         msg.data = bundle
         mHandler.sendMessage(msg)
+
+        //address
+        val msg2 = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_ADDRESS)
+        val bundle2 = Bundle()
+        bundle2.putString(Constants.DEVICE_ADDRESS, device.address)
+        msg2.data = bundle2
+        mHandler.sendMessage(msg2)
         // Update UI title
         updateUserInterfaceTitle()
     }
@@ -709,13 +716,17 @@ class ChatService(val context: Context?, private val mHandler: Handler) {
             } else {
                 Log.d("** reading file", "it was a message")
                 // Send the obtained bytes to the UI Activity
-                if (HandleSocket.activityBlueStatus == "pause" || HandleSocket.activityBlueStatus == "stop") {
-                    sendChannel1Notification(context, prefix[1])
-                } else {
-                    mHandler.obtainMessage(
-                        Constants.MESSAGE_READ, totalFileNameSizeInBytes, -1, fileName.toByteArray()
-                    ).sendToTarget()
+                mHandler.obtainMessage(
+                    Constants.MESSAGE_READ, totalFileNameSizeInBytes, -1, fileName.toByteArray()
+                ).sendToTarget()
+
+                if (fileName.split("#")[1] != "disconnectByOtherUser"){
+                    if (HandleSocket.activityBlueStatus == "pause" || HandleSocket.activityBlueStatus == "stop") {
+                        sendChannel1Notification(context, prefix[1])
+                    }
                 }
+
+
 
             }
 
@@ -725,7 +736,7 @@ class ChatService(val context: Context?, private val mHandler: Handler) {
 
     @SuppressLint("MissingPermission")
     fun sendChannel1Notification(context: Context?, message: String) {
-        val activityIntent = Intent(context, WifiChatActivity::class.java)
+        val activityIntent = Intent(context, ChatActivity::class.java)
         val contentIntent = PendingIntent.getActivity(
             context, 0, activityIntent, PendingIntent.FLAG_MUTABLE
         )
@@ -733,7 +744,7 @@ class ChatService(val context: Context?, private val mHandler: Handler) {
             .setLabel("Your answer...")
             .build()
         val replyPendingIntent: PendingIntent?
-        val replyIntent = Intent(context, DirectReplyReceiver::class.java)
+        val replyIntent = Intent(context, ReplyReceiverBluetooth::class.java)
         replyIntent.putExtra("reply", message)
         replyPendingIntent = PendingIntent.getBroadcast(
             context,
@@ -744,18 +755,6 @@ class ChatService(val context: Context?, private val mHandler: Handler) {
             "Reply",
             replyPendingIntent
         ).addRemoteInput(remoteInput).build()
-
-        /*val messagingStyle = NotificationCompat.MessagingStyle("Me")
-        messagingStyle.conversationTitle = "Group Chat"
-
-        for (chatMessage in MESSAGES) {
-            val notificationMessage = NotificationCompat.MessagingStyle.Message(
-                chatMessage.text,
-                chatMessage.timestamp,
-                chatMessage.sender
-            )
-            messagingStyle.addMessage(notificationMessage)
-        }*/
 
         val person = Person.Builder().setName("sender").build()
         val notificationStyle = NotificationCompat.MessagingStyle(person)

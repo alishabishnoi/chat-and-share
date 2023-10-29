@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Build
@@ -12,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chatapp.adapter.UserAdapter
@@ -40,24 +42,23 @@ class BluetoothUsersActivity : AppCompatActivity() {
     /**
      * m_bluetoothAdapter: The Bluetooth Adapter of this phone.
      */
-    private var m_bluetoothAdapter: BluetoothAdapter? = null
 
     var deviceList :List<Users> = arrayListOf()
     lateinit var devicesAdapter:UserAdapter
 
     var database: OfflineDatabase? = null
 
-    private lateinit var permissionManager: PermissionManager
-    private val permission1 = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
-
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    private val permission2= arrayOf(Manifest.permission.BLUETOOTH_CONNECT,
-        Manifest.permission.BLUETOOTH_SCAN)
-
     lateinit var binding: ActMainBinding
+
+    private val bluetoothManager by lazy {
+        applicationContext.getSystemService(BluetoothManager::class.java)
+    }
+    private val bluetoothAdapter by lazy {
+        bluetoothManager?.adapter
+    }
+
+    private val isBluetoothEnabled: Boolean
+        get() = bluetoothAdapter?.isEnabled == true
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,30 +66,29 @@ class BluetoothUsersActivity : AppCompatActivity() {
         binding= ActMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        permissionManager = PermissionManager.getInstance(this)
+        val enableBluetoothLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { /* Not needed */ }
 
-        if (!permissionManager.methodCheckPermission(permission1)) {
-            permissionManager.methodAskPermission(
-                this, permission1, 100
-            )
+        val permissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { perms ->
+            val canEnableBluetooth = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                perms[Manifest.permission.BLUETOOTH_CONNECT] == true
+            } else true
+
+            if(canEnableBluetooth && !isBluetoothEnabled) {
+                enableBluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+            }
         }
 
-        /*if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(this,permission2,200)
-        }*/
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (!permissionManager.methodCheckPermission(permission2)) {
-                permissionManager.methodAskPermission(
-                    this, permission2, 200
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT,
                 )
-            }
+            )
         }
 
 
@@ -126,21 +126,12 @@ class BluetoothUsersActivity : AppCompatActivity() {
             PrefsHelper.putInt("OPEN", newVal)
         }
 
-        // Getting Bluetooth Adapter
-        m_bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
         // Checking if bluetooth is supported, letting user know if it isn't and closing application
-        if (m_bluetoothAdapter == null) {
+        if (bluetoothAdapter == null) {
             toast("This device does not support bluetooth")
             this.finish()
             return
-        }
-
-        // Request to enable bluetooth for user if not enabled, this ensures the user's bluetooth is on for the rest
-        // of the process
-        if (!m_bluetoothAdapter!!.isEnabled) {
-            val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH)
         }
 
         binding.floatingAddUsers.setOnClickListener {
@@ -171,10 +162,9 @@ class BluetoothUsersActivity : AppCompatActivity() {
 
         // Check which action has occurred
         if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
-
             // Check status and notify respectively
             if (resultCode == Activity.RESULT_OK) {
-                if (m_bluetoothAdapter!!.isEnabled) {
+                if (bluetoothAdapter!!.isEnabled) {
                     toast("Bluetooth has been enabled")
                 } else {
                     toast("Bluetooth has been disabled")
@@ -193,21 +183,6 @@ class BluetoothUsersActivity : AppCompatActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 100 && permissionManager.handleRequestResult(grantResults)) {
-            CustomToast.infoToast(this, "Permission Granted", CustomToast.GRAVITY_BOTTOM)
-        }
-
-        if (requestCode == 200 && permissionManager.handleRequestResult(grantResults)) {
-            CustomToast.infoToast(this, "Nearby Permission Granted", CustomToast.GRAVITY_BOTTOM)
-        }
-
-    }
 
     fun getDbChats() {
         GlobalScope.launch {
