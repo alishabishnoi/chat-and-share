@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:padding="5dp"
     android:background="@drawable/c_common_shape"
+    android:backgroundTint="@color/card_background_color"
     android:layout_margin="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -21,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:tint="@color/icon_color" />
 
     <TextView
         android:layout_width="0dp"
@@ -35,6 +36,7 @@
         android:elevation="5dp"
         android:layout_marginBottom="6dp"
         android:layout_marginStart="5dp"
+        android:textColor="@color/sub_title_text_color"
         app:layout_constraintStart_toEndOf="@id/ivPhoto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,6 +67,7 @@
             android:visibility="visible"
             android:elevation="5dp"
             android:layout_marginStart="5dp"
+            android:textColor="@color/title_text_color"
 
             />
 

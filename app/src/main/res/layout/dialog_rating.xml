@@ -5,6 +5,7 @@
     android:layout_gravity="center"
     android:layout_margin="25dp"
     android:background="@drawable/c_common_shape"
+    android:backgroundTint="@color/card_background_color"
     android:orientation="vertical">
 
     <TextView
@@ -13,7 +14,7 @@
         android:layout_height="50dp"
         android:gravity="center"
         android:text="Rate us "
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/title_text_color"
         android:background="@drawable/c_shape_oposite"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -39,7 +40,7 @@
         android:gravity="center"
         android:padding="5dp"
         android:layout_marginBottom="10dp"
-        android:textColor="@color/black"
+        android:textColor="@color/sub_title_text_color"
         android:text="Good"
         android:textSize="25sp" />
 
@@ -52,7 +53,7 @@
         android:background="@drawable/c_common_shape"
         android:gravity="center"
         android:padding="5dp"
-        android:textColor="@color/white"
+        android:textColor="@color/title_text_color"
         android:text="Submit"
         android:textSize="25sp" />
 

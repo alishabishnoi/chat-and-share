@@ -39,7 +39,7 @@
             android:fadingEdge="horizontal"
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
-            android:textColor="#515050"
+            android:textColor="@color/title_text_color"
             tools:text="Audio file..."/>
 
         <LinearLayout
@@ -52,6 +52,7 @@
                 android:id="@+id/music_duration"
                 android:layout_marginStart="10dp"
                 android:text="3 min"
+                android:textColor="@color/sub_title_text_color"
                 />
 
             <TextView
@@ -61,6 +62,7 @@
                 android:layout_marginStart="40dp"
                 android:textSize="14sp"
                 android:text="10 mb"
+                android:textColor="@color/sub_title_text_color"
                 />
 
         </LinearLayout>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="10dp"
+    android:paddingTop="5dp"
     android:layout_gravity="end"
     android:gravity="end"
     android:id="@+id/layoutUser"
@@ -26,9 +26,9 @@
                 android:id="@+id/tvMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/black"
+                android:padding="4dp"
+                android:layout_marginTop="3dp"
+                android:textColor="@color/title_text_color"
                 android:textSize="16sp"
                 tools:text="Kesa h " />
 
@@ -43,8 +43,9 @@
                 android:visibility="visible">
 
                 <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="centerCrop"
                     android:id="@+id/iFileType"
                     android:layout_gravity="bottom"
                     android:src="@drawable/ic_music"/>
@@ -55,14 +56,15 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     >
+
                     <TextView
                         android:id="@+id/tvFileName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="3dp"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
                         android:singleLine="true"
+                        android:textColor="@color/title_text_color"
+                        android:textSize="16sp"
                         tools:text="Kesa h bahi delhi ja rha kya kal tu \n or
                 suna teriesi tesi😊😊😊" />
 
@@ -71,7 +73,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="3dp"
-                        android:textColor="#727171"
+                        android:textColor="@color/sub_title_text_color"
                         android:textSize="11sp"
                         tools:text="35kb"
                         android:gravity="center"
@@ -94,10 +96,11 @@
                     android:id="@+id/tvTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black"
+                    android:textColor="@color/sub_title_text_color"
                     android:textSize="11sp"
                     android:layout_gravity="center"
                     android:gravity="center"
+                    android:layout_marginEnd="3dp"
                     tools:text="16:24 PM" />
 
                 <ImageView
@@ -112,12 +115,13 @@
 
         <ImageView
             android:id="@+id/userImage"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="10dp"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_marginEnd="3dp"
             android:layout_gravity="bottom"
-            android:src="@drawable/ic_man_me" />
+            android:rotation="270"
+            android:src="@drawable/ic_this"
+            app:tint="@color/icon_color" />
 
 
 

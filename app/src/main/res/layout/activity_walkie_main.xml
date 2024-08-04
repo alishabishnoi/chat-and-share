@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/activity_background_color"
     >
 
     <com.skyfishjy.library.RippleBackground
@@ -21,7 +22,8 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_centerInParent="true"
-            android:src="@drawable/ic_wifi_find_24" />
+            android:src="@drawable/ic_wifi_find_24"
+            app:tint="@color/icon_color" />
     </com.skyfishjy.library.RippleBackground>
 
     <TextView
@@ -36,7 +38,7 @@
         android:layout_marginRight="8dp"
         android:text="Connection Status"
         android:textAlignment="center"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@color/title_text_color"
         android:textSize="18sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"

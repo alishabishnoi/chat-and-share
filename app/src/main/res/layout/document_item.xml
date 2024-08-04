@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:tint="@color/icon_color" />
 
     <TextView
         android:layout_width="0dp"
@@ -30,6 +30,7 @@
         android:textSize="16sp"
         android:elevation="5dp"
         android:layout_marginTop="6dp"
+        android:textColor="@color/title_text_color"
         app:layout_constraintStart_toEndOf="@id/ivPhoto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -60,6 +61,7 @@
             android:visibility="visible"
             android:elevation="5dp"
             android:layout_marginStart="10dp"
+            android:textColor="@color/sub_title_text_color"
 
             />
 
@@ -68,9 +70,9 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:id="@+id/tvLastSeen"
-            android:text="connect"
+            android:text="Connect"
             android:textColor="@color/green"
-            android:gravity="top|center"
+            android:gravity="center"
             android:textStyle="bold"
             android:textSize="18sp"
             android:visibility="visible"
@@ -90,7 +92,7 @@
         app:cardCornerRadius="20dp"
         android:layout_margin="2dp"
         android:padding="10dp"
-        app:cardBackgroundColor="#EBEAEA"
+        app:cardBackgroundColor="@color/card_background_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -34,4 +34,9 @@
     <string name="more_rating_very_good">Very Good</string>
     <string name="more_rating_awesome">Awesome</string>
 
+    <string name="day">Day</string>
+    <string name="night">Night</string>
+    <string name="more_theme_head">App Theme</string>
+    <string name="more_theme_msg">Change app theme from default</string>
+
 </resources>

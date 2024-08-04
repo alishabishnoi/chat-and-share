@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="title_text_color">#F6F3F3</color>
+    <color name="sub_title_text_color">#FDFCFC</color>
+    <color name="activity_background_color">@color/black</color>
+    <color name="card_background_color">#4D4C4C</color>
+    <color name="icon_color">#F4EFEF</color>
+
+    <color name="colorItemLeft">#545353</color>
+    <color name="colorItemRight">#456D1B</color>
+</resources>

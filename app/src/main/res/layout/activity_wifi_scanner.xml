@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_gravity="center"
     android:gravity="center"
+    android:background="@color/activity_background_color"
     >
 
 
@@ -16,6 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Chosen Device: "
+        android:textColor="@color/title_text_color"
         />
 
     <ListView
@@ -30,5 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan"
+
         />
 </LinearLayout>

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.Splash">
+    android:background="@color/activity_background_color"
+    tools:context=".activity.MainActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/button"
@@ -14,7 +15,7 @@
         app:cardCornerRadius="20dp"
         android:layout_margin="15dp"
         android:padding="5dp"
-        app:cardBackgroundColor="#EBEAEA"
+        app:cardBackgroundColor="@color/card_background_color"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -33,13 +34,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:tint="@color/icon_color" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLastMsg"
                 android:text="Bluetooth Chat"
+                android:fontFamily="@font/alice"
                 android:singleLine="true"
                 android:gravity="center_vertical"
                 android:textStyle="bold"
@@ -57,12 +59,14 @@
                 android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvAddress"
+                android:fontFamily="@font/alice"
                 android:text="Chat with friends for free \n near to you"
                 android:gravity="center_vertical"
                 android:textStyle="italic"
                 android:textSize="14sp"
                 android:elevation="5dp"
                 android:layout_marginStart="5dp"
+                android:textColor="@color/sub_title_text_color"
                 app:layout_constraintStart_toEndOf="@id/ivPhoto"
                 app:layout_constraintTop_toBottomOf="@id/tvLastMsg"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -80,7 +84,7 @@
         app:cardCornerRadius="20dp"
         android:layout_margin="15dp"
         android:padding="5dp"
-        app:cardBackgroundColor="#EBEAEA"
+        app:cardBackgroundColor="@color/card_background_color"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -99,13 +103,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:tint="@color/grey" />
+                app:tint="@color/icon_color" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvDeviceName2"
                 android:text="Wifi Chat"
+                android:fontFamily="@font/alice"
                 android:singleLine="true"
                 android:gravity="center_vertical"
                 android:textStyle="bold"
@@ -124,11 +129,13 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvAddress2"
                 android:text="Chat and Share files \n seamlessly"
+                android:fontFamily="@font/alice"
                 android:gravity="center_vertical"
                 android:textStyle="italic"
                 android:textSize="14sp"
                 android:elevation="5dp"
                 android:layout_marginStart="5dp"
+                android:textColor="@color/sub_title_text_color"
                 app:layout_constraintStart_toEndOf="@id/ivPhoto2"
                 app:layout_constraintTop_toBottomOf="@id/tvDeviceName2"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -144,7 +151,7 @@
         app:cardCornerRadius="20dp"
         android:layout_margin="15dp"
         android:padding="5dp"
-        app:cardBackgroundColor="#EBEAEA"
+        app:cardBackgroundColor="@color/card_background_color"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -160,6 +167,7 @@
                 android:padding="13dp"
                 android:layout_marginStart="4dp"
                 android:src="@drawable/ic_motorolla"
+                app:tint="@color/icon_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -170,6 +178,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvDeviceName3"
                 android:text="Walkie Talkie"
+                android:fontFamily="@font/alice"
                 android:singleLine="true"
                 android:gravity="center_vertical"
                 android:textStyle="bold"
@@ -188,11 +197,13 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvAddress3"
                 android:text="Free voice streaming \n within 100 mtr"
+                android:fontFamily="@font/alice"
                 android:gravity="center_vertical"
                 android:textStyle="italic"
                 android:textSize="14sp"
                 android:elevation="5dp"
                 android:layout_marginStart="5dp"
+                android:textColor="@color/sub_title_text_color"
                 app:layout_constraintStart_toEndOf="@id/ivPhoto3"
                 app:layout_constraintTop_toBottomOf="@id/tvDeviceName3"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -208,7 +219,7 @@
         app:cardCornerRadius="20dp"
         android:layout_margin="15dp"
         android:padding="5dp"
-        app:cardBackgroundColor="#EBEAEA"
+        app:cardBackgroundColor="@color/card_background_color"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -227,24 +238,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:tint="@color/icon_color"
                 />
 
             <TextView
+                android:id="@+id/tvDeviceName4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvDeviceName4"
-                android:text="File Share"
-                android:singleLine="true"
-                android:gravity="center_vertical"
-                android:textStyle="bold"
-                android:textSize="22sp"
+                android:layout_marginTop="16dp"
                 android:elevation="5dp"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:fontFamily="@font/alice"
+                android:text="File Share"
                 android:textColor="@color/colorAccent"
-                android:layout_marginTop="6dp"
-                app:layout_constraintStart_toEndOf="@id/ivPhoto4"
+                android:textSize="22sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/ivPhoto4"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="0dp"
@@ -252,11 +265,13 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvAddress4"
                 android:text="Fast and Easy file sharing \n nearby devices"
+                android:fontFamily="@font/alice"
                 android:gravity="center_vertical"
                 android:textStyle="italic"
                 android:textSize="14sp"
                 android:elevation="5dp"
                 android:layout_marginStart="5dp"
+                android:textColor="@color/sub_title_text_color"
                 app:layout_constraintStart_toEndOf="@id/ivPhoto4"
                 app:layout_constraintTop_toBottomOf="@id/tvDeviceName4"
                 app:layout_constraintBottom_toBottomOf="parent"

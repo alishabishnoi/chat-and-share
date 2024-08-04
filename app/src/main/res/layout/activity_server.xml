@@ -20,6 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SERVER"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/alice"
         android:textColor="#FFFFFF"
         android:textSize="24sp" />
 
@@ -29,7 +31,7 @@
         android:id="@+id/tvmessages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:fontFamily="@font/alice"
         android:text="NOT CONNECTED"
         android:textColor="#FFFFFF" />
 
@@ -39,22 +41,22 @@
         android:id="@+id/send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:fontFamily="@font/alice"
         android:text="Send" />
 
     <Button
         android:id="@+id/FILES"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:text="FILES" />
+        android:fontFamily="@font/alice"
+        android:text="Select Files" />
 
 
     <Button
         android:id="@+id/showFiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:text="SHOW Files"
+        android:fontFamily="@font/alice"
+        android:text="Show Files"
         />
 </LinearLayout>

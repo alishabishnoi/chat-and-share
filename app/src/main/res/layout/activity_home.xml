@@ -7,7 +7,17 @@
     android:orientation="vertical"
     android:layout_gravity="center"
     android:gravity="center"
+    android:background="@color/activity_background_color"
     >
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/alice"
+        android:text="Share Files Seamlessly"
+        android:textColor="@color/title_text_color"
+        android:textSize="24sp" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animView"
@@ -26,17 +36,19 @@
         android:layout_weight="1"
         android:textStyle="bold"
         android:text="Services"
+        android:fontFamily="@font/alice"
         android:padding="8dp"
         android:layout_gravity="center"
         android:layout_marginTop="76dp"
         android:layout_marginRight="48dp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/title_text_color"
         android:layout_marginLeft="48dp"
         android:textSize="24sp"
         android:visibility="gone"
         />
 
     <LinearLayout
+        android:id="@+id/RECEIVE"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -53,20 +65,19 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_file_receive"
-                />
+                app:tint="@color/icon_color" />
             <Button
-                android:id="@+id/RECEIVE"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Receive"
                 android:textSize="17sp"
-                android:textColor="#FFFFFF"
+                android:fontFamily="@font/alice"
+                android:textColor="@color/title_text_color"
                 android:layout_gravity="center"
-                android:gravity="center"
                 android:background="@color/zxing_transparent"
 
                 />
@@ -77,30 +88,33 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/SERVER"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center"
             android:gravity="center"
+            android:layout_marginStart="10dp"
             android:background="@drawable/rounded_button"
             >
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_send"
-                />
+                app:tint="@color/icon_color" />
 
             <Button
-                android:id="@+id/SERVER"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Send"
                 android:textSize="17sp"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/title_text_color"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:fontFamily="@font/alice"
                 android:background="@color/zxing_transparent"
 
                 />
@@ -124,7 +138,7 @@
         android:text="Scan"
         android:visibility="gone"
         android:textSize="24sp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/title_text_color"
         />
 
 

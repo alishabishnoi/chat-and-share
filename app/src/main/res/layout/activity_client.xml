@@ -16,7 +16,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFF"
+        android:fontFamily="@font/alice"
         android:text="CLIENT"
+        android:textSize="25sp"
+        android:layout_marginBottom="20dp"
         />
 
     <EditText
@@ -25,6 +28,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="ip"
+        android:visibility="gone"
         android:textColorHint="@color/white"
         android:inputType="textPersonName"
         android:textColor="#fff"
@@ -36,7 +40,17 @@
         android:layout_height="wrap_content"
         android:background="@drawable/shape"
         android:padding="8dp"
+        android:visibility="gone"
         android:text="Connect To Server"
+        />
+
+    <TextView
+        android:id="@+id/tvMessages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/alice"
+        android:text="NOT CONNECTED"
+        android:textColor="#FFFFFF"
         />
 
 
@@ -44,30 +58,18 @@
         android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/alice"
+        android:text="Send"
+        />
 
-        android:background="@drawable/shape"
-        android:text="SEND"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button11"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName4" />
 
-    <TextView
-        android:id="@+id/tvMessages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="NOT CONNECTED"
-        android:textColor="#FFFFFF"
-         />
 
     <Button
-
         android:id="@+id/FILES"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:text="FILES"
+        android:fontFamily="@font/alice"
+        android:text="Select Files"
          />
 
 
@@ -75,7 +77,7 @@
         android:id="@+id/showFiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:fontFamily="@font/alice"
         android:text="Show Files"
         />
 

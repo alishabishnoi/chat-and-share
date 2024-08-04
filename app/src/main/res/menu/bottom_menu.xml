@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:title="Theme"
+        android:id="@+id/nav_theme"
+        android:icon="@drawable/ic_rate">
+
+    </item>
+
     <item android:title="Rate Us"
         android:id="@+id/nav_rate_us"
         android:icon="@drawable/ic_rate">

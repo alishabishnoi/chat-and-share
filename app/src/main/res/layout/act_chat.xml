@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/activity_background_color">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
@@ -37,14 +38,15 @@
             android:layout_height="49dp"
             android:orientation="horizontal"
             android:background="@drawable/shape1"
-            android:backgroundTint="#F1F1F1"
+            android:backgroundTint="@color/card_background_color"
             >
             <ImageView
                 android:layout_width="0dp"
                 android:layout_weight="13"
                 android:layout_height="match_parent"
                 android:id="@+id/iPickFile"
-                android:src="@drawable/ic_add_file"/>
+                android:src="@drawable/ic_add_file"
+                app:tint="@color/icon_color" />
 
             <EditText
                 android:id="@+id/writeMsg"
@@ -55,6 +57,7 @@
                 android:inputType="text|textNoSuggestions"
                 android:padding="10dp"
                 android:background="@null"
+                android:textColor="@color/title_text_color"
                 />
         </LinearLayout>
 
@@ -63,6 +66,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_margin="4dp"
+            android:contentDescription="hello"
             app:fabSize="mini"
             app:fabCustomSize="45dp"
             app:maxImageSize="30dp"
@@ -80,6 +84,7 @@
         android:visibility="gone"
         android:padding="5dp"
         android:background="@drawable/shape2"
+        android:backgroundTint="@color/card_background_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -90,7 +95,8 @@
             android:layout_height="50dp"
             android:id="@+id/iFileType"
             android:layout_gravity="bottom"
-            android:src="@drawable/ic_music"/>
+            android:src="@drawable/ic_music"
+            app:tint="@color/icon_color" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -103,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:textColor="@color/black"
+                android:textColor="@color/title_text_color"
                 android:textSize="16sp"
                 android:singleLine="true"
                 android:text="Kesa h"
@@ -121,7 +127,7 @@
                     android:layout_weight="20"
                     android:layout_height="wrap_content"
                     android:padding="3dp"
-                    android:textColor="#727171"
+                    android:textColor="@color/sub_title_text_color"
                     android:textSize="12sp"
                     tools:text="35kb"
                     />
@@ -140,7 +146,7 @@
                     android:layout_weight="20"
                     android:layout_height="wrap_content"
                     android:padding="3dp"
-                    android:textColor="#727171"
+                    android:textColor="@color/sub_title_text_color"
                     android:textSize="11sp"
                     tools:text="35kb"
                     />

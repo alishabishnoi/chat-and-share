@@ -8,8 +8,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -45,7 +43,7 @@
         android:theme="@style/Base.Theme.ChatApp"
         tools:targetApi="31">
         <activity
-            android:name=".activity.FirstSpalsh"
+            android:name=".activity.SplashActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.ChatAppNoAction">
             <intent-filter>
@@ -55,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.FileListActivity"
+            android:name=".fileshare.FileListActivity"
             android:exported="false" />
         <activity
             android:name=".utils.Notification"
@@ -103,7 +101,7 @@
             android:name=".walkie.WalkieMain"
             android:exported="true" />
         <activity
-            android:name=".activity.Splash"
+            android:name=".activity.MainActivity"
             android:exported="true">
 
         </activity>
@@ -124,13 +122,16 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.chatapp.fileprovider"
+            android:authorities="com.bluetoothwifiofflinechattingfilesharing.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider" />
         </provider>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
